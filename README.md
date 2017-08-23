@@ -8,6 +8,7 @@ The corresponding docker image is `insanity54/docker-nuget` and can be found [he
 ## Quickstart
 
 ```bash
+git clone --recursive https://github.com/insanity54/docker-nuget
 docker-compose -f ./docker-compose.yml -f ./production.yml up
 ```
 
