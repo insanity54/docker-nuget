@@ -1,0 +1,10 @@
+
+version: '3.2'
+
+services:
+  nginx:
+    restart: always
+  php:
+    restart: always
+  mysql:
+    restart: always
