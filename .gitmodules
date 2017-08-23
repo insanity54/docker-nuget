@@ -2,3 +2,6 @@
 	path = server
 	url = https://github.com/Daniel15/simple-nuget-server.git
 	branch = master
+[submodule "docker/php/simple-nuget-server"]
+	path = docker/php/simple-nuget-server
+	url = https://github.com/Daniel15/simple-nuget-server

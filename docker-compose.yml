@@ -1,0 +1,34 @@
+version: '3.2'
+
+services:
+  nginx:
+    ports:
+      - "8080:80"
+    build: ./docker/nginx
+    links:
+      - php:php
+    depends_on:
+      - php
+    volumes:
+      - /srv/nuget/logs:/var/log/nginx
+      
+  php:
+    ports:
+      - "9000:9000"
+    depends_on:
+      - mysql
+    links:
+      - mysql:mysql
+    build: ./docker/php
+
+  mysql:
+    image: "mysql:5.7"
+    environment:
+      MYSQL_ROOT_PASSWORD: "hackme"
+      MYSQL_DATABASE: "sns"
+      MYSQL_USER: "nuget"
+      MYSQL_PASSWORD: "changeme"
+    volumes:
+      - "/srv/nuget/db:/var/lib/mysql"
+    ports:
+      - "3306"
