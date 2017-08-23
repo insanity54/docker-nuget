@@ -19,7 +19,13 @@ services:
       - mysql
     links:
       - mysql:mysql
-    build: ./docker/php
+    build:
+      context: ./docker/php
+      args:
+        MYSQL_USERNAME: "nuget"
+        MYSQL_PASSWORD: "changeme"
+        MYSQL_DBNAME: "sns"
+      
 
   mysql:
     image: "mysql:5.7"

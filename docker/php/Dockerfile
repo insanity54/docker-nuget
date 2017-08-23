@@ -1,5 +1,12 @@
 FROM php:5-fpm-alpine
 
+ARG MYSQL_USERNAME
+ARG MYSQL_PASSWORD
+ARG MYSQL_DBNAME
+ENV MYSQL_USERNAME ${MYSQL_USERNAME}
+ENV MYSQL_PASSWORD ${MYSQL_PASSWORD}
+ENV MYSQL_DBNAME ${MYSQL_DBNAME}
+
 ENV APP_BASE /var/www/html
 
 # Install php extensions needed by simple-nuget-server
@@ -14,12 +21,11 @@ COPY simple-nuget-server $APP_BASE
 RUN rm -rf $APP_BASE/.git && \
     chown 0770 $APP_BASE/db $APP_BASE/packagefiles
 
-# Set randomly generated API key
-RUN echo $(date +%s | sha256sum | base64 | head -c 32; echo) > $APP_BASE/.api-key
-RUN echo "Auto-Generated NuGet API key: $(cat $APP_BASE/.api-key)"
-RUN sed -i $APP_BASE/inc/config.php -e "s!ChangeThisKey!$(cat $APP_BASE/.api-key)!"
+# Add the entrypoint script which configures simple-nuget-server
+COPY docker-entrypoint.sh /
+RUN chmod +x /docker-entrypoint.sh
 
-# Set URL, usernames & passwords to mysql server
-RUN sed -i $APP_BASE/inc/config.php -e "s!sqlite:../db/packages.sqlite3!mysql:host=mysql;dbname=sns!"
-RUN echo "Config::\$dbUsername = 'nuget';"     >> $APP_BASE/inc/config.php
-RUN echo "Config::\$dbPassword = 'changeme';"  >> $APP_BASE/inc/config.php # @todo dynamically set this based on mysql env var configured in docker-compose.yml
+# Configure simple-nuget-server
+ENTRYPOINT ["/docker-entrypoint.sh"]
+
+CMD ["php-fpm"]
