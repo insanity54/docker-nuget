@@ -9,7 +9,11 @@ The corresponding docker image is `insanity54/docker-nuget` and can be found [he
 
 ```bash
 git clone --recursive https://github.com/insanity54/docker-nuget
-docker-compose -f ./docker-compose.yml -f ./production.yml up
+docker-compose up
+
+# OR for production use--
+
+docker-compose -f ./docker-compose.yml -f ./production.yml up -d
 ```
 
 ### Environment configuration

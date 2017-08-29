@@ -3,7 +3,7 @@ version: '3.2'
 services:
   nginx:
     ports:
-      - "8080:80"
+      - "80:80"
     build: ./docker/nginx
     links:
       - php:php
