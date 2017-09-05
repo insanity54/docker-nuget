@@ -1,18 +1,39 @@
 version: '3.2'
 
+networks:
+  traefik_webgateway:
+    external: true
+  nug:
+    external: false
+    
+
 services:
   nginx:
+    networks:
+      - nug
+      - traefik_webgateway
     image: insanity54/docker-nuget-nginx
     ports:
       - "8090:80/tcp"
     depends_on:
       - php
     volumes:
-      - /srv/nuget/www:/var/www
       - /var/log/nginx
+    deploy:
+      update_config:
+        delay: 2s
+      labels:
+        - "traefik.backend=nuget"
+        - "traefik.backend.nuget.sticky=true"
+        - "traefik.docker.network=traefik_webgateway"
+        - "traefik.port=8090"
+        - "traefik.frontend.rule=Host:nuget.twoway.net"
+        - "traefik.backend.loadbalancer.swarm=true"
 
       
   php:
+    networks:
+      - nug
     ports:
       - "9000:9000"
     depends_on:
@@ -24,9 +45,14 @@ services:
       MYSQL_USERNAME: "nuget"
       MYSQL_PASSWORD: "changeme"
       MYSQL_DBNAME: "sns"
+    deploy:
+      labels:
+        - "traefik.enable=false"
     
 
   mysql:
+    networks:
+      - nug
     image: "mysql:5.7"
     environment:
       MYSQL_ROOT_PASSWORD: "hackme"
@@ -37,3 +63,6 @@ services:
       - /var/lib/mysql
     ports:
       - "3306"
+    deploy:
+      labels:
+        - "traefik.enable=false"
