@@ -4,7 +4,7 @@ services:
   nginx:
     image: insanity54/docker-nuget-nginx
     ports:
-      - "8090:80/tcp"
+      - "80:80/tcp"
     depends_on:
       - php
     volumes:
@@ -34,6 +34,6 @@ services:
       MYSQL_USER: "nuget"
       MYSQL_PASSWORD: "changeme"
     volumes:
-      - /var/lib/mysql
+      - /srv/nuget/db:/var/lib/mysql
     ports:
       - "3306"
